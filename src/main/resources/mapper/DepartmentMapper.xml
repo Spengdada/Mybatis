@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--namespace = 所需实现的接口全限定名-->
+<mapper namespace="com.exercise.mapper.DepartmentMapper">
+    <!-- 封装规则 -->
+    <resultMap id="departmentResultMap" type="department">
+        <id property="id" column="id" />
+        <result property="name" column="name" />
+        <result property="location" column="location" />
+        <!-- 关系表中数据的封装规则 -->		<!-- 指定关系表的实体类型<注意，这里使用ofType而不是javaType -->
+        <collection property="emps" ofType="employee">
+            <id property="id" column="emp_id" />
+            <result property="name" column="emp_name" />
+            <result property="salary" column="salary" />
+            <result property="deptId" column="dept_id" />
+        </collection>
+    </resultMap>
+
+    <!-- 结果嵌套映射查询 -->
+    <select id="selectDepartmentById" resultMap="departmentResultMap" >
+        <!-- 别名（避免与d.id、d.name冲突）-->
+        SELECT d.id , d.name, d.location, e.id AS emp_id, e.name emp_name, e.salary, e.dept_id
+        FROM t_department d LEFT JOIN t_employees e
+        ON d.id = e.dept_id
+        WHERE d.id = #{id}
+    </select>
+
+    <!--嵌套Select查询 -->
+    <resultMap id="departmentResultMap2" type="department">
+        <!-- id映射不可省略，否则值为null-->
+        <id column="id" property="id"/>
+        <collection property="emps" ofType="employee" column="id"
+                    select="com.exercise.mapper.EmployeeMapper.selectEmployeeByDepartmentId">
+        </collection>
+    </resultMap>
+    <!--嵌套Select查询 -->
+    <select id="selectDepartmentById2" resultMap="departmentResultMap2">
+        select id,name,location from t_department where id = #{id}
+    </select>
+
+    <!-- 根据部门id只查询部门信息-->
+    <select id="selectDepartmentById3" resultType="Department">
+        select id,name,location from t_department where id = #{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exercise.mapper.SubjectMapper">
+    <select id="selectSubjectByStudentId" resultType="Subject">
+        SELECT s.id, s.name, s.grade, ss.student_id
+        from t_subject s
+        LEFT JOIN t_stu_sub ss
+        ON s.id = ss.subject_id
+    </select>
+</mapper>

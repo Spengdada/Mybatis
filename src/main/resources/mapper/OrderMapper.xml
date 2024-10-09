@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exercise.mapper.OrderMapper">
+    <insert id="insertOrder" parameterType="order">
+        <!--order=before表示在插入order之前调用-->
+        <selectKey keyProperty="id" resultType="java.lang.String" order="BEFORE">
+            <!-- 调用uuid()函数，并且把生成的uuid中的’-‘去掉 -->
+            SELECT REPLACE(UUID(),'-','')
+        </selectKey>
+        INSERT INTO t_order(id,name) VALUES(#{id},#{name})
+    </insert>
+</mapper>

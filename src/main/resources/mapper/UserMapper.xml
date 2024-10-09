@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace = 所需实现的接口全限定名-->
+
+<mapper namespace="com.exercise.mapper.UserMapper">
+
+    <!--id = 所需重写的接口抽象方法，resultType = 查询后所需返回的对象类型-->
+    <!--  sql方言问题     -->
+    <sql id="userColumns">
+        id,name,password,sex,birthday,registTime
+    </sql>
+    <select id="selectUserById" resultType="com.exercise.bean.User">
+        <!--#{id} = 方法的入参-->
+        SELECT * FROM t_users WHERE id = #{id}
+    </select>
+
+
+    <!--直接使用参数名...-->
+    <select id="selectUserByIdAndPwd" resultType="User">
+        SELECT id,name,password,sex,birthday,registTime
+        FROM t_users
+        WHERE id = #{id}
+          AND password = #{pwd}
+    </select>
+
+    <select id="selectUserByIdAndPwd3" resultType="user">
+        SELECT id,name,password,sex,birthday,registTime FROM t_users
+        WHERE id = #{id} AND password = #{pwd} <!-- 使用注解值 @Param("pwd") -->
+    </select>
+
+    <!-- 通过key获得value -->
+    <select id="selectUserByIdAndPwd4" resultType="user">
+        SELECT id,name,password,sex,birthday,registTime
+        FROM t_users
+        WHERE id = #{myId}
+          AND password = #{myPwd}
+    </select>
+
+    <!-- #{id}取自User对象的id属性值、#{password}同理 -->
+    <select id="selectUserByUserInfo" resultType="user">
+        SELECT id,name,password,sex,birthday,registTime
+        FROM t_users
+        WHERE id = #{id}
+          AND password = #{password}
+    </select>
+
+
+    <!-- 使用concat函数拼接'%' -->
+    <select id="selectUsersByKeyword" resultType="User">
+        SELECT id,name,password,sex,birthday,registTime
+        FROM t_users
+        WHERE name LIKE concat('%', #{keyword}, '%')
+    </select>
+
+    <delete id="deleteUser" parameterType="int">
+        DELETE FROM t_users
+        WHERE id = #{id} <!--只有一个参数时，#{任意书写}-->
+    </delete>
+
+    <update id="updateUser" parameterType="user">
+        UPDATE t_users SET name=#{name}, password=#{password}, sex=#{sex}, birthday=#{birthday}
+        WHERE id = #{id} <!--方法参数为对象时，可直接使用#{属性名}进行获取-->
+    </update>
+
+    <insert id="insertUser" parameterType="user">
+        INSERT INTO t_users
+        VALUES (#{id}, #{name}, #{password}, #{sex}, #{birthday}, #{registTime});
+    </insert>
+
+</mapper>
+

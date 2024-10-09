@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exercise.mapper.PassengerMapper">
+    <!-- 嵌套结果查询 -->
+    <resultMap id="passengerResultMap" type="passenger">
+        <!--即使property与column一致，这里的映射也不可以省略-->
+        <id property="id" column="id"/>
+        <result property="name" column="name" />
+        <result property="sex" column="sex" />
+        <result property="birthday" column="birthday" />
+        <!-- 关系表中数据的封装规则 -->	 <!-- 指定关系表的实体类型 -->
+        <association property="passport" javaType="passport">
+            <id property="id" column="passport_id" />
+            <result property="nationality" column="nationality" />
+            <result property="expire" column="expire" />
+            <result property="passengerId" column="passenger_id" />
+        </association>
+    </resultMap>
+
+    <!-- 多表连接查询 --><!-- 结果映射（查询结果的封装规则）-->
+    <select id="selectPassengerById" resultMap="passengerResultMap">
+        <!-- 别名（避免与p1.id冲突） -->
+        SELECT p1.id, p1.name, p1.sex, p1.birthday,
+        p2.id as passport_id,p2.nationality, p2.expire,p2.passenger_id
+        FROM t_passengers p1 LEFT JOIN t_passports p2
+        ON p1.id = p2.passenger_id
+        WHERE p1.id = #{id}
+    </select>
+
+    <!--    嵌套Select查询-->
+    <resultMap id="passengerResultMap2" type="passenger">
+        <!--如果property与column一致，这里的映射可以省略-->
+        <id property="id" column="id"/>
+        <result property="name" column="name" />
+        <result property="sex" column="sex" />
+        <result property="birthday" column="birthday" />
+        <!--  fetchType="lazy"开启延迟加载
+		也可以通过在mybatis-config.xml中全局开启延迟加载:
+		<settings>
+			<setting name="lazyLoadingEnabled" value="true"/>
+    	</settings>
+		-->
+        <association property="passport" javaType="passport" fetchType="lazy"
+                     column="id" select="com.exercise.mapper.PassportMapper.selectPassportByPassengerId">
+
+        </association>
+    </resultMap>
+    <select id="selectPassengerById2" resultMap="passengerResultMap2">
+        SELECT id,name,sex,birthday FROM t_passengers WHERE id=#{id}
+    </select>
+    <select id="selectPassportByPassengerId" resultType="passport">
+        SELECT id,nationality,expire,passenger_id from t_passports where passenger_id=#{id}
+    </select>
+</mapper>

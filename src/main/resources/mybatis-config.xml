@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!--MyBatis配置-->
+<!-- 根标签 -->
+<configuration>
+    <!--添加properties配置文件路径(外部配置、动态替换)-->
+    <properties resource="db.properties" />
+
+    <settings>
+        <!--打印SQL到控制台-->
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+
+        <!-- 开启驼峰，开启后，只要数据库字段和对象属性名字母相同，无论中间加多少下划线都可以识别 -->
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+    </settings>
+
+
+
+    <typeAliases>
+        <!--定义类的别名-->
+        <!--<typeAlias type="org.example.entity.User" alias="User" />-->
+        <!--自动扫描包，将原类名作为别名-->
+        <package name="com.exercise.bean" />
+    </typeAliases>
+
+    <!--JDBC环境配置、选中默认环境-->
+    <!-- 核心配置 -->
+    <environments default="MySqlDB">
+        <!--MySql数据库环境配置-->
+        <environment id="MySqlDB">
+            <!--事务管理-->
+            <transactionManager type="JDBC"/>
+            <!--连接池-->
+            <!-- 数据库源,如果使用自带的数据库源,那么以下四个必须要配齐.如果缺了驱动,那么就会报空指针异常,因为找不到需要的驱动 -->
+            <dataSource type="org.apache.ibatis.datasource.pooled.PooledDataSourceFactory">
+                <!--这里的value值使用${}引用properties文件中的key -->
+                <property name="driver" value="${db.driver}"/>
+                <property name="url" value="${db.url}"/>
+                <property name="username" value="${db.username}"/>
+                <property name="password" value="${db.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!--Mapper注册-->
+    <mappers>
+        <!--注册Mapper文件的所在位置-->
+        <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/ProductMapper.xml"/>
+        <mapper resource="mapper/OrderMapper.xml"/>
+        <mapper resource="mapper/ManagerMapper.xml"/>
+        <mapper resource="mapper/PassengerMapper.xml"/>
+        <mapper resource="mapper/PassportMapper.xml"/>
+        <mapper resource="mapper/DepartmentMapper.xml"/>
+        <mapper resource="mapper/EmployeeMapper.xml"/>
+        <mapper resource="mapper/StudentMapper.xml"/>
+        <mapper resource="mapper/SubjectMapper.xml"/>
+
+
+
+
+
+    </mappers>
+
+</configuration>
